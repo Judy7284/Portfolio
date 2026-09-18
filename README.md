@@ -43,7 +43,7 @@ An Android application for organizing personal book collections with local stora
 
 ## Portfolio
 
-Live website coming soon.
+Live website https://judy-chen.dev/
 
 ## Contact
 
