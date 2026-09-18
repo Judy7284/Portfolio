@@ -8,9 +8,11 @@ import vineWall from "./assets/vine-wall.png";
 import desk from "./assets/desk.png";
 import frontDesk from "./assets/front-desk.png";
 import deskAsset from "./assets/desk-asset.png";
+import backgroundFill from "./assets/background-fill.png";
 
 const DESIGN_WIDTH = 1285;
 const DESIGN_HEIGHT = 700;
+const MIN_DESKTOP_VISIBLE = 0.7;
 
 type Tab =
   | "about"
@@ -20,22 +22,46 @@ type Tab =
   | "gallery"
   | "contact";
 
+type RoomMode = "desktop" | "mobile";
+
 function App() {
   const [screenScale, setScreenScale] = useState(1);
+  const [roomMode, setRoomMode] = useState<RoomMode>("desktop");
   const [activeTab, setActiveTab] = useState<Tab>("about");
 
   useEffect(() => {
-    let lastScreenWidth = window.screen.availWidth;
-    let lastScreenHeight = window.screen.availHeight;
+    let lastScreenWidth = 0;
+    let lastScreenHeight = 0;
 
-    const calculateScale = () => {
-      const scaleX = window.screen.availWidth / DESIGN_WIDTH;
-      const scaleY = window.screen.availHeight / DESIGN_HEIGHT;
+    const calculateLayout = () => {
+      const screenWidth = window.screen.availWidth;
+      const screenHeight = window.screen.availHeight;
 
-      setScreenScale(Math.min(scaleX, scaleY));
+      lastScreenWidth = screenWidth;
+      lastScreenHeight = screenHeight;
+
+      const scaleX = screenWidth / DESIGN_WIDTH;
+      const scaleY = screenHeight / DESIGN_HEIGHT;
+
+      const roomScale = Math.max(scaleX, scaleY);
+
+      const renderedRoomWidth = DESIGN_WIDTH * roomScale;
+
+      const visibleWidthRatio = Math.min(
+        1,
+        screenWidth / renderedRoomWidth
+      );
+
+      const nextRoomMode: RoomMode =
+        visibleWidthRatio >= MIN_DESKTOP_VISIBLE
+          ? "desktop"
+          : "mobile";
+
+      setScreenScale(roomScale);
+      setRoomMode(nextRoomMode);
     };
 
-    calculateScale();
+    calculateLayout();
 
     const handleResize = () => {
       const currentScreenWidth = window.screen.availWidth;
@@ -45,16 +71,16 @@ function App() {
         currentScreenWidth !== lastScreenWidth ||
         currentScreenHeight !== lastScreenHeight
       ) {
-        lastScreenWidth = currentScreenWidth;
-        lastScreenHeight = currentScreenHeight;
-        calculateScale();
+        calculateLayout();
       }
     };
 
     window.addEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleResize);
 
     return () => {
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleResize);
     };
   }, []);
 
@@ -63,8 +89,18 @@ function App() {
   } as CSSProperties;
 
   return (
-    <main className="portfolio" style={portfolioStyle}>
+    <main
+      className={`portfolio ${roomMode}-room`}
+      style={portfolioStyle}
+    >
       <div className="world">
+        <div
+          className="background-fill"
+          style={{
+            backgroundImage: `url(${backgroundFill})`,
+          }}
+        />
+
         <div
           className="background"
           style={{
@@ -78,6 +114,8 @@ function App() {
             backgroundImage: `url(${backgroundExtension})`,
           }}
         />
+
+        <img src={desk} className="desk" alt="" />
       </div>
 
       <div className="portfolio-vine">
@@ -89,7 +127,9 @@ function App() {
           <div className="nav-buttons">
             <button
               type="button"
-              className={`nav-button ${activeTab === "about" ? "active" : ""}`}
+              className={`nav-button ${
+                activeTab === "about" ? "active" : ""
+              }`}
               onClick={() => setActiveTab("about")}
               aria-label="About Me"
             >
@@ -99,7 +139,9 @@ function App() {
 
             <button
               type="button"
-              className={`nav-button ${activeTab === "skills" ? "active" : ""}`}
+              className={`nav-button ${
+                activeTab === "skills" ? "active" : ""
+              }`}
               onClick={() => setActiveTab("skills")}
               aria-label="Skills"
             >
@@ -253,6 +295,7 @@ function App() {
                             COMPETE.CO ↗
                           </a>
                         </h2>
+
                         <p className="role-name">Software Engineer</p>
                       </div>
 
@@ -425,7 +468,8 @@ function App() {
                 <span className="gallery-symbol">✦</span>
                 <h2>COMING SOON</h2>
                 <p>
-                  It exist I swear, i'm just still debating what looks good and actually finishing them.
+                  It exist I swear, i'm just still debating what looks good and
+                  actually finishing them.
                 </p>
               </div>
             </div>
@@ -436,12 +480,6 @@ function App() {
               <div className="section-heading">
                 <h1>CONTACT</h1>
               </div>
-
-              <p className="contact-intro">
-                I'm interested in frontend and software engineering
-                opportunities where I can combine development with thoughtful
-                user experiences.
-              </p>
 
               <div className="contact-list">
                 <a href="mailto:Judychen7284@gmail.com">

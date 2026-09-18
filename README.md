@@ -13,7 +13,7 @@ Built as an interactive pixel RPG-inspired interface with custom artwork, respon
 
 ## Features
 
-- Responsive layout across different screen sizes (the background being eaten up is a feature, not a bug, I spent way too much time trying to get it to work like that)
+- Responsive layout across different screen sizes (the background being eaten up is a feature not a bug)
 - Interactive tab-based navigation
 - Custom pixel art environment and UI
 - Animated background elements
