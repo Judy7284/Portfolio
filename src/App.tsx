@@ -2,8 +2,13 @@ import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import "./App.css";
 
-import backgroundAnimation from "./assets/background.gif";
+import backgroundNight from "./assets/background.gif";
+import backgroundDay from "./assets/background-day.gif";
+import backgroundSunset from "./assets/background-sunset.gif";
+import backgroundSunrise from "./assets/background-sunrise.gif";
+import backgroundDark from "./assets/background-dark.png";
 import backgroundExtension from "./assets/background-extension.png";
+
 import vineWall from "./assets/vine-wall.png";
 import desk from "./assets/desk.png";
 import frontDesk from "./assets/front-desk.png";
@@ -28,6 +33,66 @@ function App() {
   const [screenScale, setScreenScale] = useState(1);
   const [roomMode, setRoomMode] = useState<RoomMode>("desktop");
   const [activeTab, setActiveTab] = useState<Tab>("about");
+
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // //test
+  // const [testHour, setTestHour] = useState<number | null>(null);
+
+useEffect(() => {
+  const timer = window.setInterval(() => {
+    setCurrentTime(new Date());
+  }, 60_000);
+
+  return () => window.clearInterval(timer);
+}, []);
+
+// const hour = testHour ?? currentTime.getHours() + currentTime.getMinutes() / 60;
+  
+const hour = currentTime.getHours() + currentTime.getMinutes() / 60;
+
+  let nightOpacity = 0;
+  let sunriseOpacity = 0;
+  let dayOpacity = 0;
+  let sunsetOpacity = 0;
+
+  if (hour >= 5 && hour < 6) {
+    // Night -> Sunrise
+    const progress = hour - 5;
+
+    nightOpacity = 1 - progress;
+    sunriseOpacity = progress;
+  } else if (hour >= 6 && hour < 7) {
+    // Sunrise
+    sunriseOpacity = 1;
+  } else if (hour >= 7 && hour < 8) {
+    // Sunrise -> Day
+    const progress = hour - 7;
+
+    sunriseOpacity = 1 - progress;
+    dayOpacity = progress;
+  } else if (hour >= 8 && hour < 17) {
+    // Day
+    dayOpacity = 1;
+  } else if (hour >= 17 && hour < 18) {
+    // Day -> Sunset
+    const progress = hour - 17;
+
+    dayOpacity = 1 - progress;
+    sunsetOpacity = progress;
+  } else if (hour >= 18 && hour < 20) {
+    // Sunset
+    sunsetOpacity = 1;
+  } else if (hour >= 20 && hour < 21) {
+    // Sunset -> Night
+    const progress = hour - 20;
+
+    sunsetOpacity = 1 - progress;
+    nightOpacity = progress;
+  } else {
+    // Night
+    nightOpacity = 1;
+  }
 
   useEffect(() => {
     let lastScreenWidth = 0;
@@ -88,11 +153,28 @@ function App() {
     "--screen-scale": screenScale,
   } as CSSProperties;
 
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
   return (
     <main
-      className={`portfolio ${roomMode}-room`}
+      className={`portfolio ${roomMode}-room ${theme}-theme`}
       style={portfolioStyle}
     >
+      {/* //test
+      <div className="time-tester">
+        <button onClick={() => setTestHour(4)}>4 AM</button>
+        <button onClick={() => setTestHour(5.5)}>5:30 AM</button>
+        <button onClick={() => setTestHour(6)}>6 AM</button>
+        <button onClick={() => setTestHour(7.5)}>7:30 AM</button>
+        <button onClick={() => setTestHour(12)}>12 PM</button>
+        <button onClick={() => setTestHour(17.5)}>5:30 PM</button>
+        <button onClick={() => setTestHour(19)}>7 PM</button>
+        <button onClick={() => setTestHour(20.5)}>8:30 PM</button>
+        <button onClick={() => setTestHour(22)}>10 PM</button>
+
+        <button onClick={() => setTestHour(null)}>REAL TIME</button>
+      </div> */}
+      
       <div className="world">
         <div
           className="background-fill"
@@ -101,12 +183,46 @@ function App() {
           }}
         />
 
+      <div className="background-stack">
         <div
-          className="background"
+          className="background background-night"
           style={{
-            backgroundImage: `url(${backgroundAnimation})`,
+            backgroundImage: `url(${backgroundNight})`,
+            opacity: nightOpacity,
           }}
         />
+
+        <div
+          className="background background-sunrise"
+          style={{
+            backgroundImage: `url(${backgroundSunrise})`,
+            opacity: sunriseOpacity,
+          }}
+        />
+
+        <div
+          className="background background-day"
+          style={{
+            backgroundImage: `url(${backgroundDay})`,
+            opacity: dayOpacity,
+          }}
+        />
+
+        <div
+          className="background background-sunset"
+          style={{
+            backgroundImage: `url(${backgroundSunset})`,
+            opacity: sunsetOpacity,
+          }}
+        />
+
+        <div
+          className="background background-dark"
+          style={{
+            backgroundImage: `url(${backgroundDark})`,
+          }}
+        />
+      </div>
 
         <div
           className="background-extension"
@@ -118,10 +234,13 @@ function App() {
         <img src={desk} className="desk" alt="" />
       </div>
 
+      <div className="room-darkness" />
+
       <div className="portfolio-vine">
         <img src={vineWall} alt="" />
       </div>
-
+      
+      
       <section className="portfolio-window">
         <nav className="side-nav">
           <div className="nav-buttons">
@@ -196,6 +315,23 @@ function App() {
               <span className="nav-icon">✉</span>
               <span className="nav-label">Contact Me</span>
             </button>
+
+            <button
+              type="button"
+              className="nav-button theme-nav-button"
+              onClick={() =>
+                setTheme((current) => (current === "light" ? "dark" : "light"))
+              }
+              aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+            >
+              <span className="nav-icon">
+                {theme === "light" ? "☾" : "☀"}
+              </span>
+
+              <span className="nav-label">
+                {theme === "light" ? "Dark Mode" : "Light Mode"}
+              </span>
+            </button>
           </div>
         </nav>
 
@@ -206,19 +342,19 @@ function App() {
                 <span>PORTFOLIO</span>
               </div>
 
-              <div className="hero-name">
+              <div className="name">
                 <h1>Judy Chen</h1>
               </div>
 
-              <div className="hero-role">
+              <div className="role">
                 Software Engineer <span>·</span> Frontend Developer
               </div>
 
-              <div className="hero-degree">
+              <div className="degree">
                 Computer Science <span>·</span> UCF '26
               </div>
 
-              <div className="hero-line" />
+              <div className="line" />
             </div>
           )}
 
@@ -228,50 +364,54 @@ function App() {
                 <h1>SKILLS</h1>
               </div>
 
-              <div className="editorial-list">
-                <section className="editorial-row">
-                  <div className="row-content">
-                    <h2>DEVELOPMENT</h2>
-                    <p>
-                      Java · Python · JavaScript · C · HTML · CSS · SQL
-                    </p>
-                    <p className="secondary-text">
-                      React · React Native · Node.js · Express.js · Tailwind CSS
-                    </p>
-                  </div>
-                </section>
+            <div className="editorial-list">
+              <section className="editorial-row">
+                <div className="row-content">
+                  <h2>DEVELOPMENT</h2>
+                  <p>
+                    Java · Python · JavaScript · C · HTML · CSS · SQL
+                  </p>
+                  <p className="secondary-text">
+                    React · React Native · Node.js · Express.js · Tailwind CSS
+                  </p>
+                </div>
+              </section>
 
-                <section className="editorial-row">
-                  <div className="row-content">
-                    <h2>DESIGN & CREATIVE</h2>
-                    <p>
-                      Figma · UI Design · Graphic Design · Pixel Art · Live2D
-                    </p>
-                  </div>
-                </section>
+              <section className="editorial-row">
+                <div className="row-content">
+                  <h2>CREATIVE DESIGN</h2>
+                  <p>
+                    Figma · UI Design · Graphic Design · Pixel Art · Live2D
+                  </p>
+                </div>
+              </section>
 
-                <section className="editorial-row">
-                  <div className="row-content">
-                    <h2>TOOLS & PLATFORMS</h2>
-                    <p>
-                      Git · GitHub · GitLab · Docker · Jira · Android Studio
-                    </p>
-                    <p className="secondary-text">
-                      Unity · AWS · Netlify · Render
-                    </p>
-                  </div>
-                </section>
+              <section className="editorial-row">
+                <div className="row-content">
+                  <h2>TOOLS & PLATFORMS</h2>
+                  <p>
+                    Git · GitHub · GitLab · Docker · Jira · Android Studio
+                  </p>
+                  <p className="secondary-text">
+                    Unity · AWS · Netlify · Render
+                  </p>
+                </div>
+              </section>
 
-                <section className="editorial-row">
-                  <div className="row-content">
-                    <h2>DATA & LANGUAGE</h2>
-                    <p>MongoDB · SQLite · Room</p>
-                    <p className="secondary-text">
-                      English · Chinese (Native)
-                    </p>
-                  </div>
-                </section>
-              </div>
+              <section className="editorial-row">
+                <div className="row-content">
+                  <h2>DATA</h2>
+                  <p>MongoDB · SQLite · Room</p>
+                </div>
+              </section>
+
+              <section className="editorial-row">
+                <div className="row-content">
+                  <h2>LANGUAGES</h2>
+                  <p>English · Chinese (Native)</p>
+                </div>
+              </section>
+            </div>
             </div>
           )}
 
