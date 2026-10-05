@@ -128,32 +128,94 @@ a {
   top: 0;
   width: 1285px;
   height: 700px;
+
   background-position: left top;
   background-repeat: no-repeat;
   background-size: 1285px 700px;
+
   transition: opacity 60s linear;
 }
 
-.background-extension {
-  position: absolute;
-  left: 1285px;
-  top: 0;
-  width: 8715px;
-  height: 700px;
-  background-position: left top;
-  background-repeat: repeat-x;
-  background-size: auto 700px;
-}
+
+/* background fill */
 
 .background-fill {
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
+
   background-position: left top;
   background-repeat: repeat;
   background-size: auto;
-  z-index: -1;
+
+  z-index: 0;
+  pointer-events: none;
+
+  opacity: 1;
+
+  transition: filter 0.8s ease;
+}
+
+.dark-theme .background-fill {
+  filter:
+    brightness(0.42)
+    saturate(0.72)
+    contrast(1.08);
+}
+
+/* extension */
+
+.background-extension {
+  position: absolute;
+  left: 1285px;
+  top: 0;
+
+  width: 8715px;
+  height: 700px;
+
+  background-position: left top;
+  background-repeat: repeat-x;
+  background-size: auto 700px;
+
+  opacity: 1;
+  transition: opacity 0.8s ease;
+}
+
+
+/* dark extension */
+
+.background-extension-dark {
+  position: absolute;
+  left: 1285px;
+  top: 0;
+
+  width: 8715px;
+  height: 700px;
+
+  background-position: left top;
+  background-repeat: repeat-x;
+  background-size: auto 700px;
+
+  pointer-events: none;
+
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+
+/* fade */
+
+.dark-theme .background-extension {
+  opacity: 0;
+}
+
+.dark-theme .background-extension-dark {
+  opacity: 1;
+}
+
+.world {
+  z-index: 1;
 }
 
 /* vines */
@@ -1486,4 +1548,90 @@ a {
     brightness(0.42)
     saturate(0.7)
     contrast(1.08);
+}
+
+/* light */
+
+.room-light {
+  position: absolute;
+  left: 0;
+  top: 0;
+
+  width: 1285px;
+  height: 700px;
+
+  object-fit: fill;
+
+  pointer-events: none;
+
+  transform: translate(15px, 15px);
+
+  transition:
+    opacity 0.8s ease,
+    filter 0.8s ease;
+}
+
+.light-mode-light {
+  opacity: 1;
+}
+
+.dark-mode-light {
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.dark-theme .light-mode-light {
+  opacity: 1;
+}
+
+.dark-theme .dark-mode-light {
+  opacity: 1;
+}
+
+.room-decor::after {
+  content: "";
+  position: absolute;
+
+  left: 870px;
+  top: 250px;
+
+  width: 300px;
+  height: 300px;
+
+  border-radius: 50%;
+
+  background: radial-gradient(
+    circle,
+    rgba(255, 225, 150, 0.32) 0%,
+    rgba(255, 215, 130, 0.18) 35%,
+    rgba(255, 205, 120, 0.06) 60%,
+    transparent 75%
+  );
+
+  opacity: 0;
+  pointer-events: none;
+
+  transition: opacity 0.8s ease;
+}
+
+.dark-theme .room-decor::after {
+  opacity: 1;
+}
+
+.lantern-button {
+  position: absolute;
+
+  left: 965px;
+  top: 310px;
+
+  width: 100px;
+  height: 180px;
+
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+
+  z-index: 10;
 }

@@ -14,6 +14,9 @@ import desk from "./assets/desk.png";
 import frontDesk from "./assets/front-desk.png";
 import deskAsset from "./assets/desk-asset.png";
 import backgroundFill from "./assets/background-fill.png";
+import backgroundExtensionDark from "./assets/backgroundExtension-dark.png";
+import light from "./assets/light.png";
+import lightDark from "./assets/light-dark.gif";
 
 const DESIGN_WIDTH = 1285;
 const DESIGN_HEIGHT = 700;
@@ -35,9 +38,6 @@ function App() {
   const [activeTab, setActiveTab] = useState<Tab>("about");
 
   const [currentTime, setCurrentTime] = useState(new Date());
-
-  // //test
-  // const [testHour, setTestHour] = useState<number | null>(null);
 
 useEffect(() => {
   const timer = window.setInterval(() => {
@@ -160,21 +160,6 @@ const hour = currentTime.getHours() + currentTime.getMinutes() / 60;
       className={`portfolio ${roomMode}-room ${theme}-theme`}
       style={portfolioStyle}
     >
-      {/* //test
-      <div className="time-tester">
-        <button onClick={() => setTestHour(4)}>4 AM</button>
-        <button onClick={() => setTestHour(5.5)}>5:30 AM</button>
-        <button onClick={() => setTestHour(6)}>6 AM</button>
-        <button onClick={() => setTestHour(7.5)}>7:30 AM</button>
-        <button onClick={() => setTestHour(12)}>12 PM</button>
-        <button onClick={() => setTestHour(17.5)}>5:30 PM</button>
-        <button onClick={() => setTestHour(19)}>7 PM</button>
-        <button onClick={() => setTestHour(20.5)}>8:30 PM</button>
-        <button onClick={() => setTestHour(22)}>10 PM</button>
-
-        <button onClick={() => setTestHour(null)}>REAL TIME</button>
-      </div> */}
-      
       <div className="world">
         <div
           className="background-fill"
@@ -183,46 +168,53 @@ const hour = currentTime.getHours() + currentTime.getMinutes() / 60;
           }}
         />
 
-      <div className="background-stack">
         <div
-          className="background background-night"
+          className="background-extension-dark"
           style={{
-            backgroundImage: `url(${backgroundNight})`,
-            opacity: nightOpacity,
+            backgroundImage: `url(${backgroundExtensionDark})`,
           }}
         />
 
-        <div
-          className="background background-sunrise"
-          style={{
-            backgroundImage: `url(${backgroundSunrise})`,
-            opacity: sunriseOpacity,
-          }}
-        />
+        <div className="background-stack">
+          <div
+            className="background background-night"
+            style={{
+              backgroundImage: `url(${backgroundNight})`,
+              opacity: nightOpacity,
+            }}
+          />
 
-        <div
-          className="background background-day"
-          style={{
-            backgroundImage: `url(${backgroundDay})`,
-            opacity: dayOpacity,
-          }}
-        />
+          <div
+            className="background background-sunrise"
+            style={{
+              backgroundImage: `url(${backgroundSunrise})`,
+              opacity: sunriseOpacity,
+            }}
+          />
 
-        <div
-          className="background background-sunset"
-          style={{
-            backgroundImage: `url(${backgroundSunset})`,
-            opacity: sunsetOpacity,
-          }}
-        />
+          <div
+            className="background background-day"
+            style={{
+              backgroundImage: `url(${backgroundDay})`,
+              opacity: dayOpacity,
+            }}
+          />
 
-        <div
-          className="background background-dark"
-          style={{
-            backgroundImage: `url(${backgroundDark})`,
-          }}
-        />
-      </div>
+          <div
+            className="background background-sunset"
+            style={{
+              backgroundImage: `url(${backgroundSunset})`,
+              opacity: sunsetOpacity,
+            }}
+          />
+
+          <div
+            className="background background-dark"
+            style={{
+              backgroundImage: `url(${backgroundDark})`,
+            }}
+          />
+        </div>
 
         <div
           className="background-extension"
@@ -662,6 +654,28 @@ const hour = currentTime.getHours() + currentTime.getMinutes() / 60;
 
       <div className="room-decor">
         <img src={desk} className="desk" alt="" />
+        <img
+          className="room-light light-mode-light"
+          src={light}
+          alt=""
+        />
+
+          <img
+            className="room-light dark-mode-light"
+            src={lightDark}
+            alt=""
+          />
+
+          <button
+            type="button"
+            className="lantern-button"
+            onClick={() =>
+              setTheme((current) =>
+                current === "light" ? "dark" : "light"
+              )
+            }
+            aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+          />
       </div>
 
       <div className="front-desk-layer">
